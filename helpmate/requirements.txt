@@ -1,0 +1,14 @@
+openai==1.52.0
+langchain==0.3.7
+langchain-core==0.3.21
+langchain-openai==0.2.5
+langgraph==0.2.45
+faiss-cpu==1.8.0
+pandas==2.2.0
+numpy==1.26.3
+fastapi==0.115.4
+uvicorn==0.32.0
+pydantic==2.10.2
+python-dotenv==1.0.0
+faker==30.8.2
+httpx<0.28.0

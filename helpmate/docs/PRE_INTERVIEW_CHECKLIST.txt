@@ -1,0 +1,253 @@
+PRE-INTERVIEW SETUP CHECKLIST
+==============================
+
+Complete this checklist 24 hours before your technical review session.
+
+═══════════════════════════════════════════════════════════════════════════════════════
+☐ ENVIRONMENT SETUP
+═══════════════════════════════════════════════════════════════════════════════════════
+
+☐ 1. Python Environment
+   □ Python 3.10+ installed and accessible
+   □ Virtual environment created (optional but recommended)
+   □ All dependencies installed: pip install -r requirements.txt
+   □ No import errors when running: python -c "import langchain, langgraph, faiss"
+
+☐ 2. Azure OpenAI Credentials
+   □ .env file created from .env.template
+   □ AZURE_OPENAI_API_KEY filled in
+   □ AZURE_OPENAI_ENDPOINT filled in (https://your-resource.openai.azure.com/)
+   □ AZURE_OPENAI_DEPLOYMENT_NAME filled in (your GPT-4 deployment)
+   □ AZURE_OPENAI_EMBEDDING_DEPLOYMENT filled in (text-embedding-3-large)
+   □ Credentials tested: python -c "from config import Config; Config.validate()"
+
+☐ 3. Data Generation
+   □ Tickets generated: python generate_tickets.py
+   □ Knowledge corpus generated: python generate_knowledge_corpus.py
+   □ Test scenarios generated: python generate_test_scenarios.py
+   □ Files exist:
+     - data/tickets.csv (150 rows)
+     - data/knowledge_corpus.json (~182 documents)
+     - data/test_scenarios.json (10 scenarios)
+
+☐ 4. FAISS Index Built
+   □ Index built: python rag_system.py
+   □ Files exist:
+     - data/faiss_index.index
+     - data/faiss_index.pkl
+   □ No errors during index loading test
+   □ Test retrieval works (script outputs 3 relevant results)
+
+☐ 5. System Health Check
+   □ Main agent runs: python helpmate_agent.py
+   □ FastAPI starts: python app.py (check http://localhost:8000/health)
+   □ Demo script runs: python demo.py (at least first scenario)
+   □ Evaluation runs: python evaluate_agent.py (can take 5-10 min)
+
+═══════════════════════════════════════════════════════════════════════════════════════
+☐ DEMO PREPARATION
+═══════════════════════════════════════════════════════════════════════════════════════
+
+☐ 6. Demo Script Rehearsal
+   □ Run full demo.py at least once before interview
+   □ Familiarize yourself with all 5 scenarios
+   □ Know which scenario demonstrates which capability:
+     1. Happy Path → Grounding & citations
+     2. Cold Retrieval → Adaptive retry & failure recovery
+     3. P1 Escalation → Priority-based routing
+     4. Adversarial → Prompt injection resistance
+     5. Out-of-Scope → Scope validation
+   □ Practice explaining agent trajectory as it runs
+   □ Test fallback: Record demo video in case of environment issues
+
+☐ 7. Architecture Explanation
+   □ Read ARCHITECTURE.txt thoroughly
+   □ Can draw multi-agent diagram on whiteboard
+   □ Can explain coordinator → worker → critic flow
+   □ Can explain why NOT a pipeline (dynamic routing)
+   □ Prepared to discuss each agent's role
+
+☐ 8. Code Walkthrough Prep
+   □ Know where key files are:
+     - helpmate_agent.py (LangGraph orchestration)
+     - agents/coordinator_agent.py (planning logic)
+     - agents/retrieval_worker.py (adaptive search)
+     - agents/critic_agent.py (grounding validation)
+     - tools/agent_tools.py (11 available tools)
+   □ Can quickly navigate to and explain any component
+   □ Prepared to show how routing works (conditional edges)
+
+☐ 9. Evaluation Results Ready
+   □ Run evaluate_agent.py and save results
+   □ Know your scores:
+     - Overall: ____ / 1.00
+     - Tool Selection: ____ / 1.00
+     - Trajectory Efficiency: ____ / 1.00
+     - Failure Recovery: ____ / 1.00
+     - Escalation Correctness: ____ / 1.00
+     - Grounding Faithfulness: ____ / 1.00
+     - Guardrail Effectiveness: ____ / 1.00
+   □ Can explain any scores < 0.80
+   □ Have examples ready of successful vs challenging scenarios
+
+═══════════════════════════════════════════════════════════════════════════════════════
+☐ DOCUMENTATION REVIEW
+═══════════════════════════════════════════════════════════════════════════════════════
+
+☐ 10. Read Key Documents
+   □ README.txt - System overview and setup
+   □ ARCHITECTURE.txt - Detailed design decisions
+   □ ASSUMPTIONS.txt - What you assumed and future work
+   □ INTERVIEW_GUIDE.txt - Quick reference for common questions
+
+☐ 11. Prepare Talking Points
+   □ Elevator pitch (30 sec): "HelpMate is a multi-agent system that..."
+   □ Architecture justification (2 min): "I chose coordinator-worker-critic because..."
+   □ Grounding strategy (2 min): "To prevent hallucination, I..."
+   □ Production readiness (3 min): "For production deployment, I would..."
+   □ With more time (2 min): "Given more resources, I would..."
+
+═══════════════════════════════════════════════════════════════════════════════════════
+☐ TECHNICAL DEEP DIVE PREP
+═══════════════════════════════════════════════════════════════════════════════════════
+
+☐ 12. RAG System
+   □ Can explain embedding choice (text-embedding-3-large)
+   □ Can explain FAISS vs alternatives (Pinecone, Weaviate)
+   □ Can explain retrieval strategy (semantic search, top-K=5)
+   □ Can explain adaptive retry logic (Attempt 1, 2, 3)
+
+☐ 13. Multi-Agent Coordination
+   □ Can explain LangGraph state management
+   □ Can explain conditional routing (coordinator decisions)
+   □ Can explain tool selection (11 tools, agents choose)
+   □ Can trace example ticket through full workflow
+
+☐ 14. Grounding & Validation
+   □ Can explain prompt engineering for citations
+   □ Can explain critic's review criteria
+   □ Can explain revision loop (max 2 attempts)
+   □ Can show example resolution with proper citations
+
+☐ 15. Security & Guardrails
+   □ Can explain prompt injection defense
+   □ Can explain input sanitization approach
+   □ Can demonstrate adversarial scenario
+   □ Can explain HITL decision points
+
+═══════════════════════════════════════════════════════════════════════════════════════
+☐ BACKUP PLANS
+═══════════════════════════════════════════════════════════════════════════════════════
+
+☐ 16. Environment Issues
+   □ Recorded demo video as fallback (if live demo fails)
+   □ Screenshots of key results saved
+   □ Evaluation results JSON saved
+   □ Can walk through code without running if needed
+
+☐ 17. Azure OpenAI Issues
+   □ Know your rate limits (requests/min)
+   □ Have retry logic in place
+   □ Can explain graceful degradation if API down
+   □ Alternative: Use cached previous results to show behavior
+
+☐ 18. Questions You Can't Answer
+   □ Honest approach: "I haven't implemented that yet, but here's how I would..."
+   □ Redirect to strengths: "Great question. Related to that, let me show you..."
+   □ Note for follow-up: "I'd need to research that further and get back to you"
+
+═══════════════════════════════════════════════════════════════════════════════════════
+☐ FINAL 24-HOUR CHECKLIST
+═══════════════════════════════════════════════════════════════════════════════════════
+
+☐ 19. Day Before Interview
+   □ Run full system test: python setup.py
+   □ Run demo.py end-to-end successfully
+   □ Verify FastAPI server starts: python app.py
+   □ Test Azure OpenAI connectivity (make a test embedding call)
+   □ Charge laptop fully
+   □ Close unnecessary applications
+   □ Test screen sharing (if virtual interview)
+
+☐ 20. Morning of Interview (2 hours before)
+   □ Restart computer (fresh start)
+   □ Navigate to helpmate directory
+   □ Activate virtual environment (if using)
+   □ Run quick test: python helpmate_agent.py (verify working)
+   □ Open key files in IDE for reference:
+     - helpmate_agent.py
+     - agents/coordinator_agent.py
+     - INTERVIEW_GUIDE.txt
+   □ Have ARCHITECTURE.txt open in separate window
+
+☐ 21. 15 Minutes Before Interview
+   □ Close all unrelated applications
+   □ Disable notifications
+   □ Open terminal in helpmate directory
+   □ Have demo.py ready to run
+   □ Have browser open to http://localhost:8000/docs (FastAPI Swagger UI)
+   □ Deep breath - you've got this!
+
+═══════════════════════════════════════════════════════════════════════════════════════
+☐ DURING INTERVIEW - FLOW
+═══════════════════════════════════════════════════════════════════════════════════════
+
+☐ 22. Introduction (2-3 min)
+   □ Brief overview of HelpMate
+   □ Mention key capabilities: multi-agent, RAG, adaptive behavior
+   □ Preview: "I'll demo the system, then walk through architecture"
+
+☐ 23. Live Demo (15-20 min)
+   □ Run demo.py
+   □ Narrate as scenarios execute:
+     - "Here the coordinator is analyzing priority..."
+     - "Notice it's retrying with a broader query..."
+     - "Critic is validating citations..."
+   □ Highlight key decisions in trajectory
+   □ Show resolution note with proper citations
+
+☐ 24. Architecture Deep Dive (10-15 min)
+   □ Draw multi-agent diagram (or show prepared diagram)
+   □ Explain coordinator-worker-critic pattern
+   □ Show LangGraph code (conditional routing)
+   □ Explain grounding strategy (prompt + critic)
+   □ Discuss tool orchestration
+
+☐ 25. Q&A (20-30 min)
+   □ Use INTERVIEW_GUIDE.txt for common questions
+   □ If asked to show code: Navigate quickly, explain concisely
+   □ If asked about production: Reference ARCHITECTURE.txt section 3
+   □ If asked about future work: Reference ASSUMPTIONS.txt
+   □ Take notes on feedback for follow-up
+
+☐ 26. Closing (2-3 min)
+   □ Summarize key strengths:
+     - Genuine agency (not pipeline)
+     - Grounding validation (prevent hallucination)
+     - Adaptive behavior (cold retrieval, priority branching)
+     - Production considerations (monitoring, security, scale)
+   □ Express enthusiasm for role
+   □ Ask about next steps
+
+═══════════════════════════════════════════════════════════════════════════════════════
+EMERGENCY CONTACTS & REFERENCES
+═══════════════════════════════════════════════════════════════════════════════════════
+
+If something breaks:
+- Error messages: Check config.py - credentials correct?
+- FAISS not found: Run python rag_system.py to rebuild
+- Import errors: pip install -r requirements.txt
+- Azure OpenAI errors: Check rate limits, wait and retry
+
+Key metrics to remember:
+- 150 tickets generated
+- 182 documents indexed (25 resolutions + 7 KB + 150 tickets)
+- 10 adaptive test scenarios
+- 11 tools available to agents
+- 4 agents: Coordinator, Retrieval Worker, Diagnosis Worker, Critic
+- Target scores: Overall >0.80, Guardrails 1.00
+
+Good luck! You've built a sophisticated multi-agent system with genuine agency,
+adaptive reasoning, and production-grade design. Trust your preparation.
+
+═══════════════════════════════════════════════════════════════════════════════════════

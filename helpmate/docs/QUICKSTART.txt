@@ -1,0 +1,263 @@
+HELPMATE - QUICK START GUIDE
+============================
+
+Get HelpMate running in 10 minutes!
+
+═══════════════════════════════════════════════════════════════════════════════════════
+STEP 1: CONFIGURE CREDENTIALS (2 minutes)
+═══════════════════════════════════════════════════════════════════════════════════════
+
+1. Copy the environment template:
+   copy .env.template .env
+
+2. Open .env and fill in your Azure OpenAI credentials:
+
+   AZURE_OPENAI_API_KEY=your_api_key_here
+   AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+   AZURE_OPENAI_DEPLOYMENT_NAME=your-gpt4-deployment
+   AZURE_OPENAI_EMBEDDING_DEPLOYMENT=your-embedding-deployment
+
+3. Save the file
+
+═══════════════════════════════════════════════════════════════════════════════════════
+STEP 2: INSTALL DEPENDENCIES (2 minutes)
+═══════════════════════════════════════════════════════════════════════════════════════
+
+Run:
+   pip install -r requirements.txt
+
+This installs:
+- openai, langchain, langgraph (AI frameworks)
+- faiss-cpu (vector search)
+- fastapi, uvicorn (API server)
+- pandas, faker (data generation)
+
+═══════════════════════════════════════════════════════════════════════════════════════
+STEP 3: RUN SETUP SCRIPT (5 minutes)
+═══════════════════════════════════════════════════════════════════════════════════════
+
+Run:
+   python setup.py
+
+This will:
+1. Generate 150 synthetic IT support tickets
+2. Create knowledge corpus (25 resolutions + 7 KB articles)
+3. Generate 10 adaptive test scenarios
+4. Build FAISS vector index (embeds 182 documents)
+
+You'll see progress output like:
+   Generated 150 tickets
+   Knowledge corpus generated: 25 resolution notes, 7 KB articles
+   Test scenarios generated: 10 scenarios
+   Building FAISS index...
+   Embedding document 1/182...
+   ✓ SETUP COMPLETE!
+
+═══════════════════════════════════════════════════════════════════════════════════════
+STEP 4: RUN DEMO (1 minute)
+═══════════════════════════════════════════════════════════════════════════════════════
+
+Run:
+   python demo.py
+
+This launches an interactive demo showing:
+1. Happy path - Email stuck in outbox
+2. Cold retrieval - Rare custom software issue
+3. P1 escalation - Company-wide email outage
+4. Adversarial input - Prompt injection attempt
+5. Out-of-scope - HR issue misrouted
+
+Press Enter to step through each scenario.
+
+═══════════════════════════════════════════════════════════════════════════════════════
+ALTERNATIVE: RUN API SERVER
+═══════════════════════════════════════════════════════════════════════════════════════
+
+Start FastAPI server:
+   python app.py
+
+Then visit:
+- API docs: http://localhost:8000/docs
+- Health check: http://localhost:8000/health
+
+Test endpoint with curl:
+   curl -X POST "http://localhost:8000/api/v1/process_ticket" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "priority": "P3",
+       "category": "VPN",
+       "subject": "VPN disconnecting",
+       "description": "VPN drops every 10 minutes",
+       "department": "Sales"
+     }'
+
+═══════════════════════════════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════════════════
+
+Problem: "ModuleNotFoundError: No module named 'faker'"
+Solution: pip install faker pandas
+
+Problem: "FAISS index not found"
+Solution: python rag_system.py
+
+Problem: "Azure OpenAI authentication failed"
+Solution: Check .env file - are credentials correct? Is endpoint URL complete?
+
+Problem: "Rate limit exceeded"
+Solution: Azure OpenAI has rate limits. Wait 1 minute and retry.
+
+Problem: Import errors with langchain/langgraph
+Solution: 
+   pip uninstall langchain langgraph
+   pip install langchain==0.3.7 langgraph==0.2.45
+
+═══════════════════════════════════════════════════════════════════════════════════════
+VERIFY INSTALLATION
+═══════════════════════════════════════════════════════════════════════════════════════
+
+Quick test to verify everything works:
+
+   python -c "from config import Config; Config.validate(); print('✓ Configuration OK')"
+   python -c "from rag_system import RAGSystem; r=RAGSystem(); r.load_index(); print('✓ FAISS index OK')"
+   python -c "from helpmate_agent import HelpMateAgent; print('✓ Agent system OK')"
+
+If all three print "✓ OK", you're ready!
+
+═══════════════════════════════════════════════════════════════════════════════════════
+WHAT NEXT?
+═══════════════════════════════════════════════════════════════════════════════════════
+
+For Interview Prep:
+1. Read README.txt - Complete system overview
+2. Read ARCHITECTURE.txt - Design decisions
+3. Read INTERVIEW_GUIDE.txt - Common questions & answers
+4. Run demo.py multiple times - Get familiar with scenarios
+
+For Exploration:
+1. python helpmate_agent.py - Process a single test ticket
+2. python evaluate_agent.py - Full evaluation (takes 10-15 min)
+3. python app.py - Start API server, try different tickets
+
+For Understanding:
+- Look at agents/coordinator_agent.py - See planning logic
+- Look at agents/retrieval_worker.py - See adaptive retry
+- Look at agents/critic_agent.py - See grounding validation
+- Look at helpmate_agent.py - See LangGraph orchestration
+
+═══════════════════════════════════════════════════════════════════════════════════════
+FILE STRUCTURE
+═══════════════════════════════════════════════════════════════════════════════════════
+
+helpmate/
+│
+├── Core System
+│   ├── config.py                    - Configuration
+│   ├── rag_system.py                - Vector search with FAISS
+│   ├── helpmate_agent.py            - Main agent orchestration
+│   ├── agents/                      - Individual agent implementations
+│   └── tools/                       - Tool definitions
+│
+├── Data Generation
+│   ├── generate_tickets.py
+│   ├── generate_knowledge_corpus.py
+│   └── generate_test_scenarios.py
+│
+├── API & Demo
+│   ├── app.py                       - FastAPI server
+│   ├── demo.py                      - Interactive demo
+│   └── evaluate_agent.py            - Evaluation framework
+│
+├── Documentation
+│   ├── README.txt                   - Complete guide
+│   ├── ARCHITECTURE.txt             - Design document
+│   ├── ASSUMPTIONS.txt              - Assumptions & future work
+│   ├── INTERVIEW_GUIDE.txt          - Quick reference
+│   ├── PRE_INTERVIEW_CHECKLIST.txt  - Setup checklist
+│   ├── PROJECT_SUMMARY.txt          - Project overview
+│   └── QUICKSTART.txt               - This file
+│
+└── Generated Data (after setup.py)
+    └── data/
+        ├── tickets.csv
+        ├── knowledge_corpus.json
+        ├── test_scenarios.json
+        └── faiss_index.*
+
+═══════════════════════════════════════════════════════════════════════════════════════
+EXPECTED BEHAVIOR
+═══════════════════════════════════════════════════════════════════════════════════════
+
+When you run demo.py, you should see:
+
+1. Coordinator analyzes the ticket
+2. Retrieval worker searches for similar tickets and KB articles
+3. Diagnosis worker generates resolution with citations
+4. Critic validates grounding and citations
+5. Final resolution displayed with all sections
+
+The agent should:
+✓ Choose different tools for different tickets (not always the same sequence)
+✓ Cite sources for all technical claims
+✓ Escalate P1 incidents immediately
+✓ Retry with broader queries if initial retrieval is poor
+✓ Ignore prompt injection attempts and focus on real issue
+
+═══════════════════════════════════════════════════════════════════════════════════════
+COMMON FIRST-TIME ISSUES
+═══════════════════════════════════════════════════════════════════════════════════════
+
+Issue: Setup seems slow (5+ minutes)
+Reason: Embedding 182 documents takes time
+Solution: This is normal! Azure OpenAI rate limits apply. Be patient.
+
+Issue: Demo shows "poor retrieval quality"
+Reason: This is expected for cold retrieval scenario!
+Solution: Watch how agent adapts - retries with broader queries, then acknowledges limitation
+
+Issue: Critic rejects resolution
+Reason: This is the system working correctly!
+Solution: Agent will retry with better grounding. Max 2 revision loops.
+
+Issue: P1 ticket doesn't show full resolution
+Reason: P1 tickets escalate immediately (by design)
+Solution: This demonstrates priority-based routing - correct behavior!
+
+═══════════════════════════════════════════════════════════════════════════════════════
+READY FOR INTERVIEW?
+═══════════════════════════════════════════════════════════════════════════════════════
+
+Checklist:
+☐ Setup completed successfully (python setup.py)
+☐ Demo runs without errors (python demo.py)
+☐ Can explain multi-agent architecture
+☐ Can show example resolution with citations
+☐ Know where key code files are
+☐ Read INTERVIEW_GUIDE.txt for common questions
+
+If yes to all: You're ready! 🚀
+
+═══════════════════════════════════════════════════════════════════════════════════════
+NEED HELP?
+═══════════════════════════════════════════════════════════════════════════════════════
+
+Check these files:
+- README.txt - Detailed setup and usage
+- PRE_INTERVIEW_CHECKLIST.txt - Verify all steps completed
+- INTERVIEW_GUIDE.txt - Answers to common questions
+
+Still stuck?
+1. Check .env file has correct credentials
+2. Verify Python 3.10+ installed: python --version
+3. Reinstall dependencies: pip install -r requirements.txt --force-reinstall
+4. Rebuild FAISS index: python rag_system.py
+
+═══════════════════════════════════════════════════════════════════════════════════════
+
+That's it! You should now have a working HelpMate system.
+
+Run: python demo.py
+
+Good luck with your interview!
+
+═══════════════════════════════════════════════════════════════════════════════════════
